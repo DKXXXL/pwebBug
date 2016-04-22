@@ -55,6 +55,7 @@ def getNextWeb(content):
 
 
 #String
+
 historyfile = "history"
 
 #[String]->[String]->[String]
@@ -71,7 +72,12 @@ def monoize(source):
 
 #String->Nothing
 def historyRecord(history_):
+    global historyfile
+    h = open(historyfile,"r")
+    r = h.read()
+    h.close()
     h = open(historyfile,"w")
+    h.write(r + "\n")
     h.write(history_+"\n")
     h.flush()
     h.close()
@@ -81,17 +87,30 @@ def startBug(startwebfile,function):
     r = h.readlines()
     h.close()
     _startBug(startwebfile,function,r)
+
+def rmret(url):
+    x = url.split("\n")
+    ret = ""
+    for y in x:
+        ret = ret + y
+    return ret
     
 #String->((String,String)->b)->[String]->Nothing
 def _startBug(startwebfile,function,history):
     i = file_input (startwebfile)
     while(i):
-        url = i
+        url =rmret(i)
+        
         x = (url,getHtml(url))
-        y = filter_(history,getNextWeb(x))        
+        y = filter_(history,getNextWeb(x))
+        print "nextweb:"
+        print y
         function(x)
         historyRecord(url)
+        
         history.append(url)
+        print "history:"
+        print history
         if(y != None):
             file_output (startwebfile,y)
         i  = file_input (startwebfile)
